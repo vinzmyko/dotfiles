@@ -78,7 +78,7 @@ return {
         end
 
         -- Intercept easymotion commands BEFORE they execute
-        local unction wrap_easymotion_command(cmd)
+        local function wrap_easymotion_command(cmd)
             return function()
                 disable_all_diagnostics()
                 -- Execute the command after disabling diagnostics
