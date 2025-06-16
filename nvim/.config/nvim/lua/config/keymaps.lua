@@ -6,7 +6,7 @@ map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr =
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 map({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
--- Window navigation (works with tmux-navigator)
+-- Window navigation
 map("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true })
 map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
 map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
@@ -48,10 +48,21 @@ map("n", "<C-u>", "<C-u>zz", { desc = "Half Page Up (center)" })
 map("n", "n", "nzzzv", { desc = "Next Search (center)" })
 map("n", "N", "Nzzzv", { desc = "Prev Search (center)" })
 
+-- Center after treesitter function navigation
+map("n", "]f", function()
+    require("nvim-treesitter.textobjects.move").goto_next_start("@function.outer")
+    vim.cmd("normal! zz")
+end, { desc = "Next Function (centered)" })
+
+map("n", "[f", function()
+    require("nvim-treesitter.textobjects.move").goto_previous_start("@function.outer")
+    vim.cmd("normal! zz")
+end, { desc = "Previous Function (centered)" })
+
 -- Clear search highlighting
 map("n", "<leader>h", ":nohlsearch<CR>", { desc = "Clear Search Highlight" })
 
--- Better word deletion in insert mode (avoid browser conflicts)
+-- Better word deletion in insert mode
 map("i", "<C-BS>", "<C-w>", { desc = "Delete Word Backward" })
 map("i", "<C-H>", "<C-w>", { desc = "Delete Word Backward (alt)" })
 
