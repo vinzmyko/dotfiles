@@ -74,53 +74,51 @@ autocmd({ "BufWritePre" }, {
     end,
 })
 
--- Writing mode autocmds
-local writing = augroup("WritingMode", { clear = true })
-
--- Variables to track writing mode state
-vim.g.writing_mode = false
-
--- Function to toggle writing mode
-function _G.toggle_writing_mode()
-    vim.g.writing_mode = not vim.g.writing_mode
-
-    if vim.g.writing_mode then
-        -- Enable writing mode
-        vim.opt_local.spell = true
-        vim.opt_local.spelllang = "en_gb"
-        vim.opt_local.wrap = true
-        vim.opt_local.linebreak = true
-        vim.opt_local.textwidth = 80
-        vim.diagnostic.enable(false)
-
-        -- Zen mode (simple version - hide UI elements)
-        vim.opt.laststatus = 0
-        vim.opt.ruler = false
-        vim.opt.showcmd = false
-        vim.opt.number = false
-        vim.opt.relativenumber = false
-        vim.opt.signcolumn = "no"
-
-        print("✍️  Writing mode enabled")
+-- Writing mode using zen-mode.nvim
+vim.keymap.set("n", "<leader>uw", function()
+    -- Check if zen-mode is available
+    local ok, zen_mode = pcall(require, "zen-mode")
+    if ok then
+        zen_mode.toggle()
     else
-        -- Disable writing mode
-        vim.opt_local.spell = false
-        vim.opt_local.wrap = false
-        vim.opt_local.linebreak = false
-        vim.opt_local.textwidth = 0
-        vim.diagnostic.enable()
+        -- Fallback to basic writing mode if zen-mode isn't installed
+        vim.g.writing_mode = not vim.g.writing_mode
 
-        -- Restore UI
-        vim.opt.laststatus = 2 -- Show statusline
-        vim.opt.ruler = true
-        vim.opt.showcmd = true
-        vim.opt.number = true
-        vim.opt.relativenumber = true
-        vim.opt.signcolumn = "yes"
+        if vim.g.writing_mode then
+            -- Enable writing mode
+            vim.opt_local.spell = true
+            vim.opt_local.spelllang = "en_gb"
+            vim.opt_local.wrap = true
+            vim.opt_local.linebreak = true
+            vim.opt_local.textwidth = 110
+            vim.diagnostic.enable(false)
 
-        print("💻 Writing mode disabled")
+            -- Zen mode (simple version - hide UI elements)
+            vim.opt.laststatus = 0
+            vim.opt.ruler = false
+            vim.opt.showcmd = false
+            vim.opt.number = false
+            vim.opt.relativenumber = false
+            vim.opt.signcolumn = "no"
+
+            print("Writing mode enabled")
+        else
+            -- Disable writing mode
+            vim.opt_local.spell = false
+            vim.opt_local.wrap = false
+            vim.opt_local.linebreak = false
+            vim.opt_local.textwidth = 0
+            vim.diagnostic.enable()
+
+            -- Restore UI
+            vim.opt.laststatus = 2 -- Show statusline
+            vim.opt.ruler = true
+            vim.opt.showcmd = true
+            vim.opt.number = true
+            vim.opt.relativenumber = true
+            vim.opt.signcolumn = "yes"
+
+            print("Writing mode disabled")
+        end
     end
-end
-
--- Keymap for writing mode toggle
-vim.keymap.set("n", "<leader>uw", toggle_writing_mode, { desc = "Toggle Writing Mode" })
+end, { desc = "Toggle Writing Mode" })
