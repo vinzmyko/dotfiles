@@ -35,16 +35,16 @@ return {
             float_opts = {
                 border = "curved",
                 winblend = 0,
-                highlights = {
-                    border = "Normal",
-                    background = "Normal",
-                },
                 width = function()
                     return math.floor(vim.o.columns * 0.8)
                 end,
                 height = function()
                     return math.floor(vim.o.lines * 0.8)
                 end,
+            },
+            highlights = {
+                FloatBorder = { link = "FloatBorder" },
+                NormalFloat = { link = "NormalFloat" },
             },
             winbar = {
                 enabled = false,
