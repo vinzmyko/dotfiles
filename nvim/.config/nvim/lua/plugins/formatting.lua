@@ -74,7 +74,7 @@ return {
                 rust = {}, -- clippy via rust-analyzer
                 cs = {},   -- handled by omnisharp
                 yaml = {},
-                dockerfile = { "hadolint" },
+                dockerfile = {},
 
                 -- Secondary languages
                 javascript = { "eslint_d" },
