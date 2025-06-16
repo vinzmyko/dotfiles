@@ -28,6 +28,26 @@ return {
             on_highlights = function(highlights, colors)
                 -- Customize highlights if needed
                 -- Example: highlights.Comment = { fg = colors.comment, italic = true }
+
+                highlights.TelescopeSelectionCaret = {
+                    fg = colors.orange, -- Use tokyonight's orange
+                    bold = true
+                }
+
+                highlights.TelescopeSelection = {
+                    fg = colors.fg,
+                    bg = colors.bg_highlight,
+                    bold = true
+                }
+
+                highlights.TelescopeMatching = {
+                    fg = colors.blue,
+                    bold = true
+                }
+
+                highlights.TelescopePromptPrefix = {
+                    fg = colors.purple
+                }
             end,
         },
         config = function(_, opts)
