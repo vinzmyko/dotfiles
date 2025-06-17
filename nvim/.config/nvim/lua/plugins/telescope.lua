@@ -28,6 +28,11 @@ return {
             { "<leader>fc", "<cmd>Telescope commands<cr>",                                 desc = "Find Commands" },
             { "<leader>fk", "<cmd>Telescope keymaps<cr>",                                  desc = "Find Keymaps" },
 
+            -- Symbol finding
+            { "<leader>fy", "<cmd>Telescope lsp_document_symbols<cr>",                     desc = "Find Symbols" },
+            { "<leader>fY", "<cmd>Telescope lsp_workspace_symbols<cr>",                    desc = "Find Workspace Symbols" },
+            { "<leader>ft", "<cmd>Telescope treesitter<cr>",                               desc = "Find Treesitter" },
+
             -- LSP integration
             { "<leader>fd", "<cmd>Telescope diagnostics<cr>",                              desc = "Find Diagnostics" },
         },

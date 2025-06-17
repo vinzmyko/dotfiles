@@ -4,10 +4,8 @@ return {
         "akinsho/toggleterm.nvim",
         version = "*",
         keys = {
-            { "<leader>ft", function() require("toggleterm").toggle() end,                                                  desc = "Toggle Terminal" },
-            { "<leader>fT", function() require("toggleterm.terminal").Terminal:new({ dir = vim.fn.getcwd() }):toggle() end, desc = "Terminal (cwd)" },
-            { "<C-/>",      function() require("toggleterm").toggle() end,                                                  desc = "Toggle Terminal",  mode = { "n", "t" } },
-            { "<C-_>",      function() require("toggleterm").toggle() end,                                                  desc = "which_key_ignore", mode = { "n", "t" } },
+            { "<C-/>", function() require("toggleterm").toggle() end, desc = "Toggle Terminal",  mode = { "n", "t" } },
+            { "<C-_>", function() require("toggleterm").toggle() end, desc = "which_key_ignore", mode = { "n", "t" } },
         },
         cmd = { "ToggleTerm", "TermExec" },
         opts = {
