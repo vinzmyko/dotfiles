@@ -48,6 +48,16 @@ return {
                 highlights.TelescopePromptPrefix = {
                     fg = colors.purple
                 }
+
+                highlights.NeoTreeFloatBorder = {
+                    fg = colors.blue1,
+                    bg = colors.none
+                }
+
+                highlights.NeoTreeFloatNormal = {
+                    bg = colors.bg_float,
+                    fg = colors.fg
+                }
             end,
         },
         config = function(_, opts)

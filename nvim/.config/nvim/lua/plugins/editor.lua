@@ -26,6 +26,11 @@ return {
         end,
         opts = {
             sources = { "filesystem", "buffers", "git_status", "document_symbols" },
+            source_selector = {
+                winbar = false,
+                statusline = false,
+            },
+            popup_border_style = "rounded",
             open_files_do_not_replace_types = { "terminal", "Trouble", "trouble", "qf", "Outline" },
             filesystem = {
                 bind_to_cwd = false,
@@ -50,7 +55,7 @@ return {
                         "obj",    -- C# build files
                     },
                 },
-                -- Git-aware root detection (like your old fix)
+                -- Git-aware root detection
                 find_command = "fd", -- Use fd for better performance
                 find_args = {
                     fd = {
@@ -137,6 +142,8 @@ return {
                 { event = events.FILE_RENAMED, handler = on_move },
             })
             require("neo-tree").setup(opts)
+            vim.api.nvim_set_hl(0, "NeoTreeFloatBorder", { link = "TelescopeBorder" })
+            vim.api.nvim_set_hl(0, "NeoTreeFloatNormal", { link = "TelescopeNormal" })
             vim.api.nvim_create_autocmd("TermClose", {
                 pattern = "*lazygit",
                 callback = function()
@@ -147,7 +154,6 @@ return {
             })
         end,
     },
-
     -- TODO comments highlighting
     {
         "folke/todo-comments.nvim",
