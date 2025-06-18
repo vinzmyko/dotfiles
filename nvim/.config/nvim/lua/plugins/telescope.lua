@@ -29,12 +29,15 @@ return {
             { "<leader>fk", "<cmd>Telescope keymaps<cr>",                                  desc = "Find Keymaps" },
 
             -- Symbol finding
-            { "<leader>fy", "<cmd>Telescope lsp_document_symbols<cr>",                     desc = "Find Symbols" },
-            { "<leader>fY", "<cmd>Telescope lsp_workspace_symbols<cr>",                    desc = "Find Workspace Symbols" },
-            { "<leader>ft", "<cmd>Telescope treesitter<cr>",                               desc = "Find Treesitter" },
+            {
+                "<leader>fy",
+                "<cmd>Telescope lsp_document_symbols symbols={'Function','Method','Constructor'}<cr>",
+                desc = "Find Document Functions",
+            },
+            { "<leader>fY", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Find Document Symbols" },
 
             -- LSP integration
-            { "<leader>fd", "<cmd>Telescope diagnostics<cr>",                              desc = "Find Diagnostics" },
+            { "<leader>fd", "<cmd>Telescope diagnostics<cr>",          desc = "Find Diagnostics" },
         },
         config = function()
             local telescope = require("telescope")
@@ -44,17 +47,6 @@ return {
                 defaults = {
                     prompt_prefix = " ",
                     selection_caret = "❯ ",
-                    get_selection_window = function()
-                        local wins = vim.api.nvim_list_wins()
-                        table.insert(wins, 1, vim.api.nvim_get_current_win())
-                        for _, win in ipairs(wins) do
-                            local buf = vim.api.nvim_win_get_buf(win)
-                            if vim.bo[buf].buftype == "" then
-                                return win
-                            end
-                        end
-                        return 0
-                    end,
                     mappings = {
                         i = {
                             ["<C-n>"] = actions.cycle_history_next,
@@ -74,35 +66,20 @@ return {
                     },
                 },
                 pickers = {
-                    find_files = {
-                        find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
-                        hidden = true,
-                    },
-                    git_files = {
-                        show_untracked = true,
-                    },
-                    live_grep = {
-                        additional_args = function()
-                            return { "--hidden", "--glob", "!**/.git/*" }
-                        end,
-                    },
-                    grep_string = {
-                        additional_args = function()
-                            return { "--hidden", "--glob", "!**/.git/*" }
-                        end,
-                    },
+                    find_files = { find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" }, hidden = true },
+                    git_files = { show_untracked = true },
+                    live_grep = { additional_args = function() return { "--hidden", "--glob", "!**/.git/*" } end },
+                    grep_string = { additional_args = function() return { "--hidden", "--glob", "!**/.git/*" } end },
                     buffers = {
                         sort_mru = true,
                         sort_lastused = true,
                         ignore_current_buffer = true,
-                        mappings = {
-                            i = {
-                                ["<C-d>"] = actions.delete_buffer,
-                            },
-                            n = {
-                                ["dd"] = actions.delete_buffer,
-                            },
-                        },
+                        mappings = { i = { ["<C-d>"] = actions.delete_buffer }, n = { ["dd"] = actions.delete_buffer } },
+                    },
+
+                    lsp_document_symbols = {
+                        path_display = { "hidden" },
+                        symbol_width = 0.85,
                     },
                 },
                 extensions = {
@@ -125,11 +102,7 @@ return {
         "nvim-telescope/telescope-ui-select.nvim",
         config = function()
             require("telescope").setup({
-                extensions = {
-                    ["ui-select"] = {
-                        require("telescope.themes").get_dropdown(),
-                    },
-                },
+                extensions = { ["ui-select"] = { require("telescope.themes").get_dropdown() } },
             })
             require("telescope").load_extension("ui-select")
         end,
