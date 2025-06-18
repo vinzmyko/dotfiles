@@ -20,12 +20,11 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- Visual enhancements
-vim.opt.cursorline = true  -- Highlight current line
-vim.opt.showmatch = true   -- Show matching brackets
-vim.opt.scrolloff = 8      -- Keep 8 lines above/below cursor
-vim.opt.sidescrolloff = 8  -- Keep 8 columns left/right of cursor
-vim.opt.signcolumn = "yes" -- Always show sign column
-vim.opt.colorcolumn = ""   -- No color column by default
+vim.opt.cursorline = true -- Highlight current line
+vim.opt.scrolloff = 7     -- Keep 'x' lines above/below cursor
+vim.opt.sidescrolloff = 8 -- Keep 'x' columns left/right of cursor
+vim.opt.signcolumn = "yes"
+vim.opt.colorcolumn = ""  -- No color column by default
 
 -- Performance
 vim.opt.updatetime = 50  -- Faster completion
