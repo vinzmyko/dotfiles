@@ -82,21 +82,6 @@ return {
         },
     },
 
-    -- Better git commit interface
-    {
-        "NeogitOrg/neogit",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "sindrets/diffview.nvim",
-            "nvim-telescope/telescope.nvim",
-        },
-        cmd = "Neogit",
-        keys = {
-            { "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit" },
-        },
-        config = true
-    },
-
     -- Enhanced diff viewing
     {
         "sindrets/diffview.nvim",
