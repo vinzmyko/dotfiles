@@ -1,8 +1,10 @@
 {
     "diagnostics.globals": [
-        "vim"
+        "vim",
+        "is_buffer_pinned"
     ],
     "diagnostics.disable": [
-        "missing-fields"
+        "missing-fields",
+        "redefined-local"
     ]
 }
