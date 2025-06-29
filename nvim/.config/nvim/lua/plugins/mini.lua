@@ -16,16 +16,78 @@ return {
         config = function(_, opts)
             require("mini.pairs").setup(opts)
 
-            -- Custom rules for Rust (if needed)
-            local pairs = require("mini.pairs")
+            -- Rust-specific autopair configuration
+            local rust_group = vim.api.nvim_create_augroup("Rust_autopairs", { clear = true })
 
-            -- Remove single quote pairing in Rust files (for lifetimes)
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "rust",
+                group = rust_group,
                 callback = function()
-                    vim.b.minipairs_disable = false
-                    -- You can add custom Rust-specific rules here if the defaults don't work
+                    -- Disable single quote pairing in Rust (for lifetimes like &'a)
+                    vim.keymap.set("i", "'", "'", {
+                        buffer = true,
+                        desc = "Insert single quote without pairing for Rust lifetimes"
+                    })
+
+                    -- Add angle bracket pairs for Rust generics using mini.pairs API
+                    local MiniPairs = require("mini.pairs")
+
+                    -- Map < to open angle bracket pair
+                    MiniPairs.map_buf(0, "i", "<", {
+                        action = "open",
+                        pair = "<>",
+                        neigh_pattern = "[^\\]."
+                    })
+
+                    -- Map > to close angle bracket pair
+                    MiniPairs.map_buf(0, "i", ">", {
+                        action = "close",
+                        pair = "<>",
+                        neigh_pattern = "[^\\]."
+                    })
                 end,
+                desc = "Configure mini.pairs for Rust",
+            })
+
+            -- Handle lazy loading case - ensure config applies even if mini.pairs loads late
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "LazyLoad",
+                group = rust_group,
+                callback = function(event)
+                    if event.data == "mini.pairs" then
+                        -- Re-trigger FileType autocmd for any open Rust buffers
+                        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                            if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype == "rust" then
+                                -- Manually apply the configuration for this buffer
+                                vim.api.nvim_buf_call(buf, function()
+                                    -- Disable single quote pairing in Rust (for lifetimes like &'a)
+                                    vim.keymap.set("i", "'", "'", {
+                                        buffer = true,
+                                        desc = "Insert single quote without pairing for Rust lifetimes"
+                                    })
+
+                                    -- Add angle bracket pairs for Rust generics using mini.pairs API
+                                    local MiniPairs = require("mini.pairs")
+
+                                    -- Map < to open angle bracket pair
+                                    MiniPairs.map_buf(0, "i", "<", {
+                                        action = "open",
+                                        pair = "<>",
+                                        neigh_pattern = "[^\\]."
+                                    })
+
+                                    -- Map > to close angle bracket pair
+                                    MiniPairs.map_buf(0, "i", ">", {
+                                        action = "close",
+                                        pair = "<>",
+                                        neigh_pattern = "[^\\]."
+                                    })
+                                end)
+                            end
+                        end
+                    end
+                end,
+                desc = "Handle mini.pairs lazy loading for Rust",
             })
         end,
     },
