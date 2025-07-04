@@ -26,9 +26,6 @@ map("n", "<leader>wd", "<C-w>c", { desc = "Delete Window" })
 -- Buffer navigation
 map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
-map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
-map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
-map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 
 -- Buffer navigation by position (BufferLine)
 map("n", "<leader>1", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "Go to Buffer 1" })
@@ -48,21 +45,21 @@ map("x", "K", ":m '<-2<CR>gv=gv", { desc = "Move Lines Up" })
 
 -- Ergonomic cursor placement
 map("n", "J", "mzJ`z", { desc = "Join Lines (keep cursor)" })
-map("n", "<C-d>", "<C-d>zz", { desc = "Half Page Down (center)" })
-map("n", "<C-u>", "<C-u>zz", { desc = "Half Page Up (center)" })
-map("n", "n", "nzzzv", { desc = "Next Search (center)" })
-map("n", "N", "Nzzzv", { desc = "Prev Search (center)" })
+map("n", "<C-d>", "<C-d>zz", { desc = "Half Page Down" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Half Page Up" })
+map("n", "n", "nztZv", { desc = "Next Search" })
+map("n", "N", "NztZv", { desc = "Prev Search" })
 
 -- Center after treesitter function navigation
 map("n", "]f", function()
     require("nvim-treesitter.textobjects.move").goto_next_start("@function.outer")
-    vim.cmd("normal! zz")
-end, { desc = "Next Function (centered)" })
+    vim.cmd("normal! zt")
+end, { desc = "Next Function" })
 
 map("n", "[f", function()
     require("nvim-treesitter.textobjects.move").goto_previous_start("@function.outer")
-    vim.cmd("normal! zz")
-end, { desc = "Previous Function (centered)" })
+    vim.cmd("normal! zt")
+end, { desc = "Previous Function" })
 
 -- Clear search highlighting
 map("n", "<leader>h", ":nohlsearch<CR>", { desc = "Clear Search Highlight" })

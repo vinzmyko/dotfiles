@@ -80,6 +80,22 @@ return {
                     lsp_document_symbols = {
                         path_display = { "hidden" },
                         symbol_width = 0.85,
+                        attach_mappings = function(prompt_bufnr, map)
+                            local actions = require('telescope.actions')
+                            local action_state = require('telescope.actions.state')
+
+                            actions.select_default:replace(function()
+                                actions.close(prompt_bufnr)
+                                local entry = action_state.get_selected_entry()
+                                if entry then
+                                    vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col })
+                                    vim.cmd("normal! zt")
+                                    vim.cmd("normal! zv") -- Unfold if needed
+                                end
+                            end)
+
+                            return true
+                        end,
                     },
                 },
                 extensions = {

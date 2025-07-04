@@ -59,7 +59,7 @@ return {
                 require("cmp_nvim_lsp").default_capabilities()
             )
 
-            -- Custom LSP keybindings (your hybrid approach)
+            -- Custom LSP keybindings
             local on_attach = function(client, bufnr)
                 local map = vim.keymap.set
                 local opts = { buffer = bufnr, silent = true }
@@ -68,13 +68,30 @@ return {
                 map("n", "<leader>k", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "LSP: Hover" }))
                 map("n", "<leader>K", vim.diagnostic.open_float,
                     vim.tbl_extend("force", opts, { desc = "LSP: Diagnostics" }))
-                map("n", "gd", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "LSP: Go to Definition" }))
-                map("n", "<leader>gr", vim.lsp.buf.references,
-                    vim.tbl_extend("force", opts, { desc = "LSP: References" }))
-                map("n", "<leader>gi", vim.lsp.buf.implementation,
-                    vim.tbl_extend("force", opts, { desc = "LSP: Implementation" }))
-                map("n", "<leader>gt", vim.lsp.buf.type_definition,
-                    vim.tbl_extend("force", opts, { desc = "LSP: Type Definition" }))
+                map("n", "gd", function()
+                    vim.lsp.buf.definition()
+                    vim.defer_fn(function()
+                        vim.cmd("normal! zt")
+                        vim.cmd("normal! zv")
+                    end, 50)
+                end, vim.tbl_extend("force", opts, { desc = "LSP: Go to Definition" }))
+                map("n", "<leader>gr", function()
+                    vim.lsp.buf.references()
+                end, vim.tbl_extend("force", opts, { desc = "LSP: References" }))
+                map("n", "<leader>gi", function()
+                    vim.lsp.buf.implementation()
+                    vim.defer_fn(function()
+                        vim.cmd("normal! zt")
+                        vim.cmd("normal! zv")
+                    end, 50)
+                end, vim.tbl_extend("force", opts, { desc = "LSP: Implementation" }))
+                map("n", "<leader>gt", function()
+                    vim.lsp.buf.type_definition()
+                    vim.defer_fn(function()
+                        vim.cmd("normal! zt")
+                        vim.cmd("normal! zv")
+                    end, 50)
+                end, vim.tbl_extend("force", opts, { desc = "LSP: Type Definition" }))
                 map("n", "<leader>.", vim.lsp.buf.code_action,
                     vim.tbl_extend("force", opts, { desc = "LSP: Code Action" }))
                 map("n", "<leader>rn", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "LSP: Rename" }))
