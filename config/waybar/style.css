@@ -1,0 +1,71 @@
+@define-color bg    #24283b;
+@define-color fg    #c0caf5;
+@define-color blk   #32344a;
+@define-color red   #f7768e;
+@define-color grn   #9ece6a;
+@define-color ylw   #e0af68;
+@define-color blu   #7aa2f7;
+@define-color mag   #bb9af7;
+@define-color cyn   #7dcfff;
+@define-color brblk #565f89;
+@define-color wht   #c0caf5;
+@define-color bg-transparent rgba(36, 40, 59, 0.9);
+
+* {
+    font-family: "Cascadia Code", monospaace;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+window#waybar {
+    background-color: @bg-transparent;
+    color: @fg;
+}
+
+#workspaces button {
+    padding: 0 6px;
+    color: @cyn;
+    background: transparent;
+    border-bottom: 3px solid @bg;
+}
+#workspaces button.active {
+    color: @cyn;
+    border-bottom: 3px solid @mag;
+}
+#workspaces button.empty {
+    color: @wht;
+}
+#workspaces button.empty.active {
+    color: @cyn;
+    border-bottom: 3px solid @mag;
+}
+
+#clock {
+    color: @cyn;
+    border-bottom: 4px solid @cyn;
+}
+
+#battery {
+    color: @blu;
+    border-bottom: 4px solid @blu;
+}
+
+#disk {
+    color: @ylw;
+    border-bottom: 4px solid @ylw;
+}
+
+#memory {
+    color: @mag;
+    border-bottom: 4px solid @mag;
+}
+
+#cpu {
+    color: @grn;
+    border-bottom: 4px solid @grn;
+}
+
+#network {
+    color: #73dacb;
+    border-bottom: 4px solid #73dacb;
+}
