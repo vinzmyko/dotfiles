@@ -61,6 +61,10 @@
 
         echo -n $host_info$env_info$pwd_info$git_info$normal"-> "
       '';
+
+      docker-build = ''
+        docker build --timestamp=(date -u +%Y-%m-%dT%H:%M:%SZ) $argv
+      '';
     };
   };
 }

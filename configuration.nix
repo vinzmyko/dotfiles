@@ -6,7 +6,7 @@
 }:
 
 {
-  imports = [ ];
+  imports = [ ./modules/audio.nix ];
 
   # Boot Configuration
   boot.loader.systemd-boot.enable = true;
@@ -23,6 +23,11 @@
   boot.kernel.sysctl = {
     "vm.swappiness" = 10; # Less aggressive swapping
     "fs.inotify.max_user_watches" = 524288; # For file watchers in dev tools
+  };
+
+  # Never suspend on lid close, manual suspend only
+  services.logind = {
+    lidSwitch = "ignore";
   };
 
   # Regional Settings
@@ -60,6 +65,7 @@
     extraGroups = [
       "wheel"
       "networkmanager"
+      "docker"
     ];
   };
 
@@ -95,9 +101,15 @@
   # System Packages
   environment.systemPackages = with pkgs; [
     gcc
+    # Put docker settings here for now, move to podman in development.nix files later
+    # development.nix cannot set virtualisation.docker.enable and add to groups
+    docker
+    docker-compose
     wl-clipboard
     adwaita-icon-theme
   ];
+
+  virtualisation.docker.enable = true;
 
   # Nix Configuration
   nixpkgs.config.allowUnfree = true;

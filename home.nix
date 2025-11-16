@@ -11,6 +11,9 @@
     ./modules/waybar.nix
     ./modules/wofi.nix
     ./modules/qutebrowser.nix
+    ./modules/brave.nix
+    ./modules/gammastep.nix
+    ./modules/spotify-player.nix
   ];
 
   home.username = "vinz";
@@ -24,24 +27,36 @@
     fd
     ripgrep
     yazi
+    zip
+    unzip
+
+    vesktop
 
     nixd
     nixfmt-rfc-style
     lua-language-server
   ];
 
+  home.sessionVariables = {
+    EDITOR = "nvim";
+  };
+
   # Create standard dir structure for user files
   home.file = {
     "downloads/.keep".text = "";
-    "resources/docs/.keep".text = "";
-    "resources/recordings/.keep".text = "";
-    "resources/screenshots/.keep".text = "";
-    "resources/wallpapers/.keep".text = "";
+    "notes/.keep".text = "";
+    "documents/.keep".text = "";
+    "videos/.keep".text = "";
+    "pictures/screenshots/.keep".text = "";
+    "pictures/wallpapers/.keep".text = "";
     "projects/personal/.keep".text = "";
   };
 
   xdg.userDirs = {
     enable = true;
     download = "${config.home.homeDirectory}/downloads";
+    documents = "${config.home.homeDirectory}/documents";
+    pictures = "${config.home.homeDirectory}/pictures";
+    videos = "${config.home.homeDirectory}/videos";
   };
 }
