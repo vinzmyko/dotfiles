@@ -1,5 +1,12 @@
 local lsp_utils = require('lsp')
 
+vim.filetype.add({
+    extension = {
+        ron = 'ron',
+        rhai = 'rhai',
+    },
+})
+
 local function setup_rust_lsp()
     if vim.fn.executable('rust-analyzer') == 0 then
         return

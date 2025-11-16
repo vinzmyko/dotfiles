@@ -38,7 +38,6 @@ vim.opt.timeoutlen = 500  -- Key timeout duration
 -- Better completion
 vim.opt.completeopt = "menuone,noselect" -- Better completion menu
 vim.opt.pumheight = 10                   -- Popup menu height
-vim.opt.formatoptions:remove("o")
 
 -- Split behavior
 vim.opt.splitbelow = true -- Horizontal splits go below
@@ -51,10 +50,10 @@ vim.opt.clipboard:append("unnamedplus")
 vim.opt.encoding = "UTF-8"     -- Set encoding
 vim.opt.fileencoding = "utf-8" -- File encoding
 
--- Disable creating comment prefix when using 'o'
-vim.api.nvim_create_autocmd("BufEnter", {
+-- Disable automatic comment continuation on Enter and o/O
+vim.api.nvim_create_autocmd("FileType", {
     callback = function()
-        vim.opt.formatoptions:remove('o')
+        vim.opt_local.formatoptions:remove({ 'r', 'o' })
     end,
 })
 

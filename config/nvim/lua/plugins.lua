@@ -49,17 +49,14 @@ return {
                 highlight = {
                     enable = true,
                     -- Disable for very large files
-                    disable = function(lang, buf)
-                        local max_filesize = 100 * 1024 -- 100 KB
-                        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-                        if ok and stats and stats.size > max_filesize then
-                            return true
-                        end
-                    end,
+                    disable = {
+                        "markdown",
+                    }
                 },
 
                 indent = {
                     enable = true,
+                    disable = { "markdown" },
                 },
             })
         end
@@ -142,4 +139,77 @@ return {
             })
         end
     },
+
+    {
+        "MeanderingProgrammer/render-markdown.nvim",
+        ft = "markdown",
+        config = function()
+            require("render-markdown").setup({
+                enabled = true,
+
+                bullet = { enabled = false },
+                code = {
+                    enabled = true,
+                    sign = false,
+                    style = "normal",
+                    position = "left",
+                    language_pad = 0,
+                    disable_background = false,
+                },
+                heading = {
+                    enabled = true,
+                    sign = false,
+                    position = "overlay",
+                    icons = { "# ", "## ", "### ", "#### ", "##### ", "###### " },
+                    signs = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+                    width = "full",
+                    left_pad = 0,
+                    right_pad = 0,
+                    min_width = 0,
+                    border = false,
+                },
+                emphasis = { enabled = true },
+                checkbox = {
+                    enabled = true,
+                    unchecked = { icon = "󰄱 " },
+                    checked = { icon = "󰱒 " },
+                },
+            })
+
+            vim.keymap.set('n', '<leader>md', ':RenderMarkdown toggle<CR>',
+                { desc = "Toggle markdown rendering" })
+        end
+    },
+
+    -- CSV file viewing and editing
+    {
+        "hat0uma/csvview.nvim",
+        ft = "csv",
+        config = function()
+            require("csvview").setup({
+                parser = {
+                    async = true,
+                    delimiter = {
+                        ft = {
+                            csv = ",",
+                            tsv = "\t",
+                        },
+                        fallbacks = { ",", "\t", ";", "|", ":", " " },
+                    },
+                },
+                view = {
+                    min_column_width = 8,
+                    spacing = 1,
+                    display_mode = "border",
+                },
+            })
+
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "csv",
+                callback = function()
+                    require("csvview").enable()
+                end,
+            })
+        end
+    }
 }

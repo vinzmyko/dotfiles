@@ -1,4 +1,5 @@
 local map = vim.keymap.set
+local project_filters = require('project-filters')
 
 -- Window navigation
 map('n', '<C-h>', '<C-w>h')
@@ -27,9 +28,22 @@ map("v", ">", ">gv")
 map("n", "J", "mzJ`z")
 
 -- Diagnostic navigation
-map('n', '[d', vim.diagnostic.goto_prev)
-map('n', ']d', vim.diagnostic.goto_next)
 map('n', '<leader>K', vim.diagnostic.open_float)
+map('n', '<leader>dr', ':DiagnosticRefresh<CR>')
+
+-- Quickfix navigation
+map('n', '<leader>dd', vim.diagnostic.setqflist, { desc = "All diagnostics to quickfix" })
+map('n', '<leader>de', function()
+    vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
+end, { desc = "Only errors to quickfix" })
+map('n', '<leader>dw', function()
+    vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.WARN })
+end, { desc = "Only warnings to quickfix" })
+
+map('n', '[q', ':cprev<CR>', { desc = "Previous quickfix item" })
+map('n', ']q', ':cnext<CR>', { desc = "Next quickfix item" })
+map('n', '<leader>qo', ':copen<CR>', { desc = "Open quickfix list" })
+map('n', '<leader>qc', ':cclose<CR>', { desc = "Close quickfix list" })
 
 -- File operations
 map('n', '<leader>fs', function()
@@ -37,8 +51,14 @@ map('n', '<leader>fs', function()
         vim.cmd('echo ""')
         if not pattern or pattern == '' then return end
 
-        local cmd = string.format('fd --type f --hidden --exclude .git --exclude .cache --exclude .local %s',
-            vim.fn.shellescape(pattern))
+        -- Get project specific exclusions
+        local excludes = project_filters.get_fd_excludes()
+        local cmd = string.format(
+            'fd --type f --hidden --exclude .git --exclude .cache --exclude .local %s %s',
+            excludes,
+            vim.fn.shellescape(pattern)
+        )
+
         local handle = io.popen(cmd)
         if not handle then
             print("fd not found")
@@ -71,11 +91,16 @@ end, { desc = "Find file by name" })
 map('n', '<leader>fg', function()
     vim.ui.input({ prompt = 'Grep pattern: ' }, function(pattern)
         vim.cmd('echo ""')
-
         if not pattern or pattern == '' then return end
 
-        -- Use rg -n to get line numbers and content
-        local cmd = string.format('rg -n --no-heading --hidden -g "!.git" %s', vim.fn.shellescape(pattern))
+        -- Get project specific exclusions
+        local excludes = project_filters.get_rg_excludes()
+        local cmd = string.format(
+            'rg -n --no-heading --hidden -g "!.git" %s %s',
+            excludes,
+            vim.fn.shellescape(pattern)
+        )
+
         local handle = io.popen(cmd)
         if not handle then
             print("ripgrep not found")
@@ -165,7 +190,60 @@ map('n', '<leader>fp', function()
     print('Copied: ' .. path)
 end, { desc = "Copy full file path" })
 
--- LSP document symbols
+-- LSP document symbols - filtered
 map('n', '<leader>s', function()
-    vim.lsp.buf.document_symbol()
-end, { desc = "Show document symbols" })
+    local params = vim.lsp.util.make_position_params()
+    vim.lsp.buf_request(0, 'textDocument/documentSymbol', params, function(err, result, ctx, config)
+        if err or not result or vim.tbl_isempty(result) then
+            print("No symbols found")
+            return
+        end
+
+        -- Symbols wanted
+        local allowed_kinds = {
+            [5] = true,  -- Class
+            [6] = true,  -- Method
+            [10] = true, -- Enum
+            [11] = true, -- Interface
+            [12] = true, -- Function
+            [23] = true, -- Struct
+        }
+
+        -- Flatten nested symbols and filter by kind
+        local function flatten_symbols(symbols, items)
+            items = items or {}
+            for _, symbol in ipairs(symbols) do
+                if allowed_kinds[symbol.kind] then
+                    table.insert(items, {
+                        filename = vim.api.nvim_buf_get_name(0),
+                        lnum = symbol.range.start.line + 1,
+                        col = symbol.range.start.character + 1,
+                        text = string.format("[%s] %s",
+                            vim.lsp.protocol.SymbolKind[symbol.kind] or "Unknown",
+                            symbol.name
+                        )
+                    })
+                end
+                -- Recursively process nested symbols
+                if symbol.children then
+                    flatten_symbols(symbol.children, items)
+                end
+            end
+            return items
+        end
+
+        local items = flatten_symbols(result)
+
+        if #items == 0 then
+            print("No structural symbols found (functions, methods, types)")
+            return
+        end
+
+        -- Set location list and open it
+        vim.fn.setloclist(0, {}, ' ', {
+            title = 'Symbols in ' .. vim.fn.expand('%:t'),
+            items = items,
+        })
+        vim.cmd('lopen')
+    end)
+end, { desc = "Show document symbols (filtered)" })
