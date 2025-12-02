@@ -92,6 +92,36 @@
     };
   };
 
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+
+    wireplumber = {
+      enable = true;
+      # Workaround for HyperX Cloud III headset - use 16-bit/48 kHz
+      extraConfig = {
+        "51-hyperx-cloud-iii" = {
+          "monitor.alsa.rules" = [
+            {
+              matches = [
+                {
+                  "node.name" = "~alsa_output.usb-HP__Inc_HyperX_Cloud_III_S_Wireless.*";
+                }
+              ];
+              actions = {
+                update-props = {
+                  "audio.format" = "S16LE";
+                  "audio.rate" = 48000;
+                };
+              };
+            }
+          ];
+        };
+      };
+    };
+  };
+
   # Fonts & Appearance
   fonts.packages = with pkgs; [
     cascadia-code
