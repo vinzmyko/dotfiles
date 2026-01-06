@@ -6,6 +6,7 @@
     ./modules/kitty.nix
     ./modules/shell.nix
     ./modules/tmux.nix
+    ./modules/libre-office.nix
     ./modules/neovim.nix
     ./modules/hyprland.nix
     ./modules/waybar.nix
