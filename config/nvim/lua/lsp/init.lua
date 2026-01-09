@@ -129,5 +129,7 @@ require("lsp.go")
 require("lsp.python")
 require("lsp.gdscript")
 require("lsp.html")
+require("lsp.css")
+require("lsp.toml")
 
 return M
