@@ -42,6 +42,7 @@ return {
                     "lua", "vim", "vimdoc", "query",
                     "nix",
                     "markdown", "markdown_inline",
+                    "c", "cpp",
                 },
                 sync_install = false,
                 auto_install = true,

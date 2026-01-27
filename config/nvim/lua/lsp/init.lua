@@ -131,5 +131,6 @@ require("lsp.gdscript")
 require("lsp.html")
 require("lsp.css")
 require("lsp.toml")
+require("lsp.cpp")
 
 return M
