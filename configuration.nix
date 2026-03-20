@@ -97,6 +97,13 @@
     alsa.enable = true;
     pulse.enable = true;
 
+    # Prevent crackling with PulseAudio loopback modules used by toggle-recording
+    extraConfig.pipewire-pulse."92-low-latency" = {
+      "pulse.properties" = {
+        "pulse.min.quantum" = "1024/48000";
+      };
+    };
+
     wireplumber = {
       enable = true;
       # Workaround for HyperX Cloud III headset - use 16-bit/48 kHz

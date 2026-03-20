@@ -10,6 +10,7 @@
     ./modules/neovim.nix
     ./modules/hyprland.nix
     ./modules/waybar.nix
+    ./modules/recording.nix
     ./modules/wofi.nix
     ./modules/qutebrowser.nix
     ./modules/brave.nix

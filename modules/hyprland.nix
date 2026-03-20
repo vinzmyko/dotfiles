@@ -5,7 +5,6 @@
     hyprpaper
     grim # Screenshots
     slurp # Screen selection
-    wf-recorder # Screen recording
     brightnessctl # Brightness control
     playerctl # Media control
   ];
