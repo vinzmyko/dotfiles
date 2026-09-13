@@ -87,6 +87,47 @@ map('n', '<leader>fs', function()
     end)
 end, { desc = "Find file by name" })
 
+-- Find directory by name, open in oil
+map('n', '<leader>fd', function()
+    vim.ui.input({ prompt = 'Find dir: ' }, function(pattern)
+        vim.cmd('echo ""')
+        if not pattern or pattern == '' then return end
+
+        local excludes = project_filters.get_fd_excludes()
+        local cmd = string.format(
+            'fd --type d --hidden --exclude .git --exclude .cache --exclude .local %s %s',
+            excludes,
+            vim.fn.shellescape(pattern)
+        )
+
+        local handle = io.popen(cmd)
+        if not handle then
+            print("fd not found")
+            return
+        end
+
+        local dirs = {}
+        for dir in handle:lines() do
+            table.insert(dirs, dir)
+        end
+        handle:close()
+
+        if #dirs == 0 then
+            print("No matches for: " .. pattern)
+        elseif #dirs == 1 then
+            require('oil').open(dirs[1])
+        else
+            vim.ui.select(dirs, {
+                prompt = string.format('%d matches for "%s": ', #dirs, pattern),
+            }, function(choice)
+                if choice then
+                    require('oil').open(choice)
+                end
+            end)
+        end
+    end)
+end, { desc = "Find directory by name (oil)" })
+
 -- Live grep with fd + ripgrep
 map('n', '<leader>fg', function()
     vim.ui.input({ prompt = 'Grep pattern: ' }, function(pattern)
@@ -190,10 +231,64 @@ map('n', '<leader>fp', function()
     print('Copied: ' .. path)
 end, { desc = "Copy full file path" })
 
+local function ron_symbols()
+    local ok, parser = pcall(vim.treesitter.get_parser, 0, 'ron')
+    if not ok or not parser then
+        print("No RON parser available")
+        return
+    end
+
+    local root = parser:parse()[1]:root()
+
+    local query = vim.treesitter.query.parse('ron', [[
+        (struct_entry . (identifier) @name)
+        (map_entry . (integer) @name)
+    ]])
+
+    local containers = { map = true, tuple = true, array = true, struct = true }
+    local items = {}
+
+    for _, node in query:iter_captures(root, 0) do
+        local row, col = node:range()
+
+        local depth = 0
+        local parent = node:parent()
+        while parent do
+            if containers[parent:type()] then depth = depth + 1 end
+            parent = parent:parent()
+        end
+
+        table.insert(items, {
+            filename = vim.api.nvim_buf_get_name(0),
+            lnum = row + 1,
+            col = col + 1,
+            text = string.rep("  ", math.max(0, depth - 1))
+                .. vim.treesitter.get_node_text(node, 0),
+        })
+    end
+
+    if #items == 0 then
+        print("No structural symbols found")
+        return
+    end
+
+    table.sort(items, function(a, b) return a.lnum < b.lnum end)
+
+    vim.fn.setloclist(0, {}, ' ', {
+        title = 'Symbols in ' .. vim.fn.expand('%:t'),
+        items = items,
+    })
+    vim.cmd('lopen')
+end
+
 -- LSP document symbols - filtered
 map('n', '<leader>s', function()
-    local params = vim.lsp.util.make_position_params()
-    vim.lsp.buf_request(0, 'textDocument/documentSymbol', params, function(err, result, ctx, config)
+    if vim.bo.filetype == 'ron' then
+        return ron_symbols()
+    end
+
+    local params = { textDocument = vim.lsp.util.make_text_document_params() }
+    vim.lsp.buf_request(0, 'textDocument/documentSymbol', params, function(err, result, _ctx, _config)
         if err or not result or vim.tbl_isempty(result) then
             print("No symbols found")
             return
