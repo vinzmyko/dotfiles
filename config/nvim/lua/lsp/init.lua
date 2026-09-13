@@ -53,7 +53,6 @@ vim.api.nvim_create_user_command('DiagnosticRefresh', function()
     vim.lsp.buf_request(0, 'textDocument/diagnostic', {
         textDocument = vim.lsp.util.make_text_document_params()
     })
-    print("Diagnostics refreshed")
 end, { desc = 'Force refresh diagnostics' })
 
 -- LSP attach keymaps and omnifunc setup
